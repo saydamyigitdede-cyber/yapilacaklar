@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Yapılacaklar Listesi</title>
+    <style>
+        body { font-family: Arial; margin: 40px; }
+        .tamamlandi { text-decoration: line-through; color: gray; }
+        form { display: inline; }
+        input[type=text] { padding: 5px; }
+    </style>
+</head>
+<body>
+<h2>Yapılacaklar Listesi</h2>
+<p>Hoş geldin, {{ request.user.username }} | <a href="{% url 'cikis' %}">Çıkış Yap</a></p>
+
+<form method="post">
+    {% csrf_token %}
+    <input type="text" name="baslik" placeholder="Yeni görev..." required>
+    <input type="text" name="aciklama" placeholder="Açıklama (isteğe bağlı)">
+    <button type="submit" name="yeni_gorev">Ekle</button>
+</form>
+
+<hr>
+
+{% for gorev in gorevler %}
+    <p class="{% if gorev.tamamlandi %}tamamlandi{% endif %}">
+        <strong>{{ forloop.counter }}.</strong> {{ gorev.baslik }} - {{ gorev.aciklama }}
+        {% if gorev.tamamlandi %}
+            (Yapıldı: {{ gorev.yapilma_tarihi|date:"d.m.Y H:i" }})
+        {% else %}
+            (Oluşturulma: {{ gorev.olusturulma_tarihi|date:"d.m.Y H:i" }})
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="gorev_id" value="{{ gorev.id }}">
+                <button type="submit" name="tamamla">Tamamla</button>
+            </form>
+        {% endif %}
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="gorev_id" value="{{ gorev.id }}">
+            <button type="submit" name="sil">Sil</button>
+        </form>
+    </p>
+{% empty %}
+    <p>Henüz görev eklenmemiş.</p>
+{% endfor %}
+
+</body>
+</html>

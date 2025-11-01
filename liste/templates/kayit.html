@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Kayıt Ol</title>
+</head>
+<body>
+<h2>Kayıt Ol</h2>
+<form method="post">
+    {% csrf_token %}
+    <input type="text" name="kullanici_adi" placeholder="Kullanıcı Adı" required><br>
+    <input type="password" name="sifre" placeholder="Şifre" required><br>
+    <button type="submit">Kayıt Ol</button>
+</form>
+{% if hata %}<p style="color:red;">{{ hata }}</p>{% endif %}
+<p>Zaten hesabın var mı? <a href="{% url 'giris' %}">Giriş yap</a></p>
+</body>
+</html>
