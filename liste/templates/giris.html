@@ -3,16 +3,143 @@
 <head>
     <meta charset="UTF-8">
     <title>Giriş Yap</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        :root{
+            --ana:#4F46E5;
+            --arka:#F8FAFC;
+            --gri:#6B7280;
+            --kirmizi:#EF4444;
+            --beyaz:#ffffff;
+        }
+
+        /* Sayfa düzeyi */
+        html,body{
+            height:100%;
+            margin:0;
+            font-family: "Segoe UI", Roboto, Arial, sans-serif;
+            background: linear-gradient(180deg, #FBFDFF 0%, var(--arka) 100%);
+            color:#111827;
+        }
+
+        /* Merkezi kart */
+        .kutu {
+            max-width:420px;
+            margin: 32px auto;
+            background: var(--beyaz);
+            border-radius:16px;
+            padding:28px;
+            box-shadow: 0 8px 24px rgba(15,23,42,0.06);
+        }
+
+        h2{
+            margin:0 0 16px 0;
+            color:var(--ana);
+            text-align:center;
+            font-size:20px;
+        }
+
+        form {
+            display:flex;
+            flex-direction:column;
+            gap:12px;
+        }
+
+        label{
+            font-size:13px;
+            color:var(--gri);
+        }
+
+        input[type="text"],
+        input[type="password"]{
+            padding:12px 14px;
+            font-size:15px;
+            border-radius:10px;
+            border:1px solid #E6E9EE;
+            outline:none;
+            transition: box-shadow .15s, border-color .15s;
+            width:100%;
+            box-sizing:border-box;
+        }
+
+        input[type="text"]:focus,
+        input[type="password"]:focus{
+            border-color: var(--ana);
+            box-shadow: 0 6px 18px rgba(79,70,229,0.12);
+        }
+
+        .buton {
+            background: var(--ana);
+            color: var(--beyaz);
+            border: none;
+            padding:12px;
+            border-radius:10px;
+            font-weight:600;
+            cursor:pointer;
+            font-size:15px;
+            transition: transform .08s ease, background .12s;
+        }
+
+        .buton:active { transform: translateY(1px); }
+        .buton:hover { background: #4338CA; }
+
+        .hata {
+            background: rgba(239,68,68,0.08);
+            border: 1px solid rgba(239,68,68,0.12);
+            color: var(--kirmizi);
+            padding:10px 12px;
+            border-radius:8px;
+            font-size:14px;
+        }
+
+        .alt {
+            margin-top:14px;
+            text-align:center;
+            font-size:14px;
+            color:var(--gri);
+        }
+
+        .alt a{
+            color:var(--ana);
+            text-decoration:none;
+            font-weight:600;
+        }
+
+        /* Küçük ekran düzeltmeleri */
+        @media (max-width:420px){
+            .kutu { margin:18px; padding:20px; }
+            h2 { font-size:18px; }
+        }
+    </style>
 </head>
 <body>
-<h2>Giriş Yap</h2>
-<form method="post">
-    {% csrf_token %}
-    <input type="text" name="kullanici_adi" placeholder="Kullanıcı Adı" required><br>
-    <input type="password" name="sifre" placeholder="Şifre" required><br>
-    <button type="submit">Giriş</button>
-</form>
-{% if hata %}<p style="color:red;">{{ hata }}</p>{% endif %}
+
+<div class="kutu" role="main" aria-labelledby="girisBaslik">
+    <h2 id="girisBaslik">🔐 Giriş Yap</h2>
+
+    <form method="post" novalidate>
+        {% csrf_token %}
+
+        <div>
+            <label for="kullanici_adi">Kullanıcı Adı</label>
+            <input id="kullanici_adi" type="text" name="kullanici_adi" placeholder="Kullanıcı Adı" required autocomplete="username" />
+        </div>
+
+        <div>
+            <label for="sifre">Şifre</label>
+            <input id="sifre" type="password" name="sifre" placeholder="Şifre" required autocomplete="current-password" />
+        </div>
+
+        <button class="buton" type="submit">Giriş</button>
+    </form>
+
+    {% if hata %}
+        <div class="hata" role="alert">{{ hata }}</div>
+    {% endif %}
+
+<label><Br/>Desing by S.Yiğit DEDE</label>
+</div>
 
 </body>
 </html>

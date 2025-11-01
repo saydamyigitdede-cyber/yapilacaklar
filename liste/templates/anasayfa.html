@@ -3,48 +3,190 @@
 <head>
     <meta charset="UTF-8">
     <title>Yapılacaklar Listesi</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <style>
-        body { font-family: Arial; margin: 40px; }
-        .tamamlandi { text-decoration: line-through; color: gray; }
-        form { display: inline; }
-        input[type=text] { padding: 5px; }
+        :root {
+            --ana-renk: #4F46E5;
+            --arka-renk: #F9FAFB;
+            --metin-renk: #111827;
+            --gri: #6B7280;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: var(--arka-renk);
+            margin: 0;
+            padding: 20px;
+            color: var(--metin-renk);
+        }
+
+        .kapsayici {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 16px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        h2 {
+            text-align: center;
+            color: var(--ana-renk);
+            margin-bottom: 10px;
+        }
+
+        .kullanici-bilgi {
+            text-align: center;
+            font-size: 14px;
+            margin-bottom: 20px;
+            color: var(--gri);
+        }
+
+        .kullanici-bilgi a {
+            color: var(--ana-renk);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        form.gorev-ekle {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        input[type=text] {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            width: 100%;
+        }
+
+        button {
+            background-color: var(--ana-renk);
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            background-color: #4338CA;
+        }
+
+        hr {
+            margin: 20px 0;
+            border: none;
+            border-top: 1px solid #eee;
+        }
+
+        .gorev {
+            background-color: #F3F4F6;
+            padding: 12px 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .gorev strong {
+            color: var(--ana-renk);
+        }
+
+        .gorev .aciklama {
+            color: var(--gri);
+            font-size: 13px;
+        }
+
+        .gorev small {
+            font-size: 12px;
+            color: var(--gri);
+        }
+
+        .gorev form {
+            display: inline;
+        }
+
+        .gorev button {
+            background-color: #10B981;
+            margin-left: 5px;
+        }
+
+        .gorev button[name="sil"] {
+            background-color: #EF4444;
+        }
+
+        .tamamlandi {
+            text-decoration: line-through;
+            color: #9CA3AF;
+        }
+
+        @media (max-width: 480px) {
+            .kapsayici {
+                padding: 15px;
+            }
+            button {
+                width: 100%;
+            }
+        }
     </style>
 </head>
 <body>
-<h2>Yapılacaklar Listesi</h2>
-<p>Hoş geldin, {{ request.user.username }} | <a href="{% url 'cikis' %}">Çıkış Yap</a></p>
 
-<form method="post">
-    {% csrf_token %}
-    <input type="text" name="baslik" placeholder="Yeni görev..." required>
-    <input type="text" name="aciklama" placeholder="Açıklama (isteğe bağlı)">
-    <button type="submit" name="yeni_gorev">Ekle</button>
-</form>
-
-<hr>
-
-{% for gorev in gorevler %}
-    <p class="{% if gorev.tamamlandi %}tamamlandi{% endif %}">
-        <strong>{{ forloop.counter }}.</strong> {{ gorev.baslik }} - {{ gorev.aciklama }}
-        {% if gorev.tamamlandi %}
-            (Yapıldı: {{ gorev.yapilma_tarihi|date:"d.m.Y H:i" }})
-        {% else %}
-            (Oluşturulma: {{ gorev.olusturulma_tarihi|date:"d.m.Y H:i" }})
-            <form method="post">
-                {% csrf_token %}
-                <input type="hidden" name="gorev_id" value="{{ gorev.id }}">
-                <button type="submit" name="tamamla">Tamamla</button>
-            </form>
-        {% endif %}
-        <form method="post">
-            {% csrf_token %}
-            <input type="hidden" name="gorev_id" value="{{ gorev.id }}">
-            <button type="submit" name="sil">Sil</button>
-        </form>
+<div class="kapsayici">
+    <h2>📝 Yapılacaklar Listesi-Desing by S.Yiğit DEDE</h2>
+    <p class="kullanici-bilgi">
+        Hoş geldin, <strong>{{ request.user.username }}</strong> |
+        <a href="{% url 'cikis' %}">Çıkış Yap</a>
     </p>
-{% empty %}
-    <p>Henüz görev eklenmemiş.</p>
-{% endfor %}
+
+    <form method="post" class="gorev-ekle">
+        {% csrf_token %}
+        <input type="text" name="baslik" placeholder="Yeni görev..." required>
+        <input type="text" name="aciklama" placeholder="Açıklama (isteğe bağlı)">
+        <button type="submit" name="yeni_gorev">Ekle</button>
+    </form>
+
+    <hr>
+
+    {% for gorev in gorevler %}
+        <div class="gorev {% if gorev.tamamlandi %}tamamlandi{% endif %}">
+            <strong>{{ forloop.counter }}.</strong> {{ gorev.baslik }}
+            {% if gorev.aciklama %}
+                <p class="aciklama">{{ gorev.aciklama }}</p>
+            {% endif %}
+            <small>
+                {% if gorev.tamamlandi %}
+                    ✅ Yapıldı: {{ gorev.yapilma_tarihi|date:"d.m.Y H:i" }}
+                {% else %}
+                    ⏰ Oluşturulma: {{ gorev.olusturulma_tarihi|date:"d.m.Y H:i" }}
+                {% endif %}
+            </small>
+
+            <div>
+                {% if not gorev.tamamlandi %}
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="gorev_id" value="{{ gorev.id }}">
+                        <button type="submit" name="tamamla">Tamamla</button>
+                    </form>
+                {% endif %}
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="gorev_id" value="{{ gorev.id }}">
+                    <button type="submit" name="sil">Sil</button>
+                </form>
+            </div>
+        </div>
+    {% empty %}
+        <p>Henüz görev eklenmemiş.</p>
+    {% endfor %}
+</div>
 
 </body>
 </html>

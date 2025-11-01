@@ -7,18 +7,22 @@ from django.http import HttpResponseForbidden
 from .models import Gorev
 
 def kullanici_giris(request):
+    hata = None  # Her durumda tanımlı olsun
+
     if request.method == 'POST':
         kullanici_adi = request.POST.get('kullanici_adi')
         sifre = request.POST.get('sifre')
         kullanici = authenticate(request, username=kullanici_adi, password=sifre)
+
         if kullanici:
             login(request, kullanici)
-            # Otomatik giriş (session hatırlansın)
-            request.session.set_expiry(60 * 60 * 24 * 365)  # 365 gün açık kalsın
+            # Oturum 1 yıl açık kalsın
+            request.session.set_expiry(60 * 60 * 24 * 365)
             return redirect('anasayfa')
         else:
-            return render(request, 'giris.html', {'hata': 'Kullanıcı adı veya şifre hatalı.'})
-    return render(request, 'giris.html')
+            hata = "Kullanıcı adı veya şifre hatalı."
+
+    return render(request, 'giris.html', {'hata': hata})
 
 
 def kullanici_kayit(request):
